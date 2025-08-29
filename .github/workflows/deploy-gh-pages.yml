@@ -30,7 +30,8 @@ jobs:
 
       - name: Build static site (Next.js export mode)
         env:
-          GITHUB_PAGES: "true"
+          # For custom domain hosting (e.g. rpsarena.fun), leave base path empty
+          PAGES_BASE_PATH: ""
         run: |
           npm run build
           touch out/.nojekyll
@@ -44,3 +45,4 @@ jobs:
           single-commit: true
           git-config-name: github-actions[bot]
           git-config-email: 41898282+github-actions[bot]@users.noreply.github.com
+          cname: rpsarena.fun
