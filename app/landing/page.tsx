@@ -9,7 +9,6 @@ import {
   Sparkles,
   ArrowRight,
   CheckCircle,
-  Play,
 } from "lucide-react"
 
 export default function LandingPage() {
@@ -94,13 +93,7 @@ export default function LandingPage() {
           </span>
         </div>
         
-        <button
-          className="inline-flex items-center rounded-md border border-purple-500 px-4 py-2 text-purple-400 hover:bg-purple-500 hover:text-white transition"
-          onClick={() => (window.location.href = '/')}
-        >
-          <Play className="w-4 h-4 mr-2" />
-          Play Now
-        </button>
+
       </nav>
 
       {/* Hero Section */}
