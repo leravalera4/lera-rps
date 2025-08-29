@@ -1,20 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { useToast } from "@/hooks/use-toast"
 import {
   Zap,
   Users,
   Trophy,
-  Star,
-  GamepadIcon,
-  Target,
   Crown,
-  Medal,
   Sparkles,
   ArrowRight,
   CheckCircle,
@@ -25,14 +16,15 @@ export default function LandingPage() {
   const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const { toast } = useToast()
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email) return
 
     setIsSubmitting(true)
-    
+    setErrorMsg(null)
+
     try {
       const response = await fetch('/api/waitlist', {
         method: 'POST',
@@ -49,16 +41,8 @@ export default function LandingPage() {
       }
       
       setIsSubmitted(true)
-      toast({
-        title: "Success!",
-        description: "You've been added to the waitlist. We'll notify you when RPS Arena launches!",
-      })
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Something went wrong. Please try again.",
-        variant: "destructive",
-      })
+      setErrorMsg(error instanceof Error ? error.message : "Something went wrong. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -110,22 +94,21 @@ export default function LandingPage() {
           </span>
         </div>
         
-        <Button 
-          variant="outline" 
-          className="border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white"
-          onClick={() => window.location.href = '/'}
+        <button
+          className="inline-flex items-center rounded-md border border-purple-500 px-4 py-2 text-purple-400 hover:bg-purple-500 hover:text-white transition"
+          onClick={() => (window.location.href = '/')}
         >
           <Play className="w-4 h-4 mr-2" />
           Play Now
-        </Button>
+        </button>
       </nav>
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
-        <Badge className="mb-6 bg-purple-500/20 text-purple-400 border-purple-500/50">
+        <span className="inline-flex items-center mb-6 px-3 py-1 rounded-md bg-purple-500/20 text-purple-400 border border-purple-500/50">
           <Sparkles className="w-3 h-3 mr-1" />
           Coming Soon
-        </Badge>
+        </span>
         
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
           The Ultimate
@@ -143,23 +126,26 @@ export default function LandingPage() {
 
         {/* Waitlist Form */}
         {!isSubmitted ? (
-          <Card className="max-w-md mx-auto bg-black/50 border-purple-500/30 backdrop-blur-sm">
-            <CardContent className="p-6">
+          <div className="max-w-md mx-auto bg-black/50 border border-purple-500/30 backdrop-blur-sm rounded-lg">
+            <div className="p-6">
               <h3 className="text-xl font-bold mb-4 text-purple-400">Join the Waitlist</h3>
               <p className="text-gray-400 mb-6">Be among the first to experience RPS Arena when it launches!</p>
               
               <form onSubmit={handleSubmit} className="space-y-4">
-                <Input
+                <input
                   type="email"
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-black/50 border-purple-500/50 text-white placeholder:text-gray-500 focus:border-purple-400"
+                  className="w-full rounded-md border border-purple-500/50 bg-black/50 px-3 py-2 text-white placeholder:text-gray-500 focus:border-purple-400 focus:outline-none"
                   required
                 />
-                <Button 
-                  type="submit" 
-                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                {errorMsg && (
+                  <p className="text-sm text-red-400">{errorMsg}</p>
+                )}
+                <button
+                  type="submit"
+                  className="w-full inline-flex items-center justify-center rounded-md px-4 py-2 font-medium bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white transition"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -168,18 +154,18 @@ export default function LandingPage() {
                     <ArrowRight className="w-4 h-4 mr-2" />
                   )}
                   {isSubmitting ? "Joining..." : "Join Waitlist"}
-                </Button>
+                </button>
               </form>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ) : (
-          <Card className="max-w-md mx-auto bg-green-500/20 border-green-500/30 backdrop-blur-sm">
-            <CardContent className="p-6 text-center">
+          <div className="max-w-md mx-auto bg-green-500/20 border border-green-500/30 backdrop-blur-sm rounded-lg">
+            <div className="p-6 text-center">
               <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-2 text-green-400">You're on the list!</h3>
               <p className="text-gray-300">We'll notify you as soon as RPS Arena launches.</p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
       </section>
 
@@ -205,20 +191,16 @@ export default function LandingPage() {
         
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
-            <Card key={index} className="bg-black/30 border-purple-500/30 backdrop-blur-sm hover:border-purple-400/50 transition-colors">
-              <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-bold mb-2 text-purple-400">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
-              </CardContent>
-            </Card>
+            <div key={index} className="bg-black/30 border border-purple-500/30 backdrop-blur-sm hover:border-purple-400/50 transition-colors rounded-lg p-6 text-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+                {feature.icon}
+              </div>
+              <h3 className="text-xl font-bold mb-2 text-purple-400">{feature.title}</h3>
+              <p className="text-gray-400">{feature.description}</p>
+            </div>
           ))}
         </div>
       </section>
-
-
 
       {/* Footer */}
       <footer className="container mx-auto px-4 py-8 border-t border-gray-800">
